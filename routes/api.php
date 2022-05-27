@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\PassportController;
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PostsController;
 use App\Http\Controllers\API\CategoryController;
 
@@ -21,20 +21,22 @@ use App\Http\Controllers\API\CategoryController;
 //     return $request->user();
 // });
 
-Route::post('login',[PassportController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->prefix('v1')->group(function () {
-    Route::get('user',[PassportController::class, 'users']);
+    Route::get('user-list-all',[AuthController::class, 'users']);
+    Route::get('useractive', [AuthController::class, 'userInfo']);
 
-    Route::get('article', [PostsController::class, 'index']);
-    Route::get('article/{id}', [PostsController::class, 'show']);
-    Route::put('/article/{id}/change', [PostsController::class, 'update']);
-    Route::post('article/develop', [PostsController::class, 'store']);
-    Route::delete('/article/{id}', [PostsController::class, 'destroy']);
+    Route::get('article-list-all', [PostsController::class, 'index']);
+    Route::get('article/show/detail/{id}', [PostsController::class, 'show']);
+    Route::post('article/create', [PostsController::class, 'store']);
+    Route::post('/article/{id}/update', [PostsController::class, 'update']);
+    Route::delete('/article/delete/{id}', [PostsController::class, 'destroy']);
 
-    Route::get('categories', [CategoryController::class, 'index']);
-    Route::get('categories/{id}', [CategoryController::class, 'show']);
-    Route::post('categories/develop', [CategoryController::class, 'store']);
-    Route::put('/categories/{id}/change', [CategoryController::class, 'update']);
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+    Route::get('categories-list-all', [CategoryController::class, 'index']);
+    Route::get('categories/show/detail/{id}', [CategoryController::class, 'show']);
+    Route::post('categories/create', [CategoryController::class, 'store']);
+    Route::put('/categories/{id}/update', [CategoryController::class, 'update']);
+    Route::delete('/categories/delete/{id}', [CategoryController::class, 'destroy']);
 });

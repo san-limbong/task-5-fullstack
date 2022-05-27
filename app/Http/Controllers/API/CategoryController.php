@@ -54,7 +54,7 @@ class CategoryController extends Controller
         
         $category=new Category();
         $category->name = $request->name;
-        $category->user_id = $request->user_id;
+        $category->user_id = auth()->user()->id;
         $category->save();
 
         return response()->json(
@@ -82,7 +82,7 @@ class CategoryController extends Controller
             }
 
             $name = $request->name;
-            $user_id = $request->user_id;
+            $user_id = auth()->user()->id;
 
             $category->name = $name;
             $category->user_id = $user_id;
