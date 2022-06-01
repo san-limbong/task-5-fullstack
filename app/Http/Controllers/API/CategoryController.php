@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Article;
 use App\Models\Category;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
@@ -100,9 +101,11 @@ class CategoryController extends Controller
     public function destroy($id){
         if($data = Category::find($id))
         {
+            $article = Article::where('category_id',$id);
+            $article->delete();
             $data->delete();
             return response()->json([
-                "message" => "Delete data success",
+                "message" => "Category with article has been deleted!",
                 ], 200);
         }
         else

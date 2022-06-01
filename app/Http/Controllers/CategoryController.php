@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -66,8 +67,10 @@ class CategoryController extends Controller
     {   
         $this->authorize('admin');
         $category = Category::findOrFail($id);
+        $article = Article::where('category_id',$id);
+        $article->delete();
         $category->delete();
-        return redirect('/categories')->with('danger', 'Category has been deleted!');
+        return redirect('/categories')->with('danger', 'Category with article has been deleted!');
 
     }
 }

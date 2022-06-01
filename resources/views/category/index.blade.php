@@ -36,7 +36,7 @@
                                         <form action="/categories/{{ $category->id }}" method="post" class="d-inline">
                                             @method('delete')
                                             @csrf
-                                        <button type="submit" class="btn btn-danger"onclick="return confirm('Are you sure?')">Delete Category</button>
+                                        <button type="submit" class="btn btn-danger"onclick="return confirm('Categories with articles will be removed?! You are sure?')">Delete Category</button>
                                     </div>
                                 </form>
                             </div>
