@@ -6,34 +6,33 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\File; 
+use Illuminate\Support\Facades\File;
 
 class PostsController extends Controller
 {
     public function index()
     {
         $data = Article::paginate(2);
-        if($data){
+        if ($data) {
             return response()->json([
                 "message" => "Retrieve data success",
                 "data" => $data
             ], 200);
-        }
-        else
+        } else
             return response()->json([
                 "message" => "Data Not Found"
             ], 404);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $data = Article::find($id);
-        if($data){
+        if ($data) {
             return response()->json([
                 "message" => "Retrieve data with id success",
                 "data" => $data
             ], 200);
-        }
-        else
+        } else
             return response()->json([
                 "message" => "Data Not Found"
             ], 404);
@@ -44,11 +43,11 @@ class PostsController extends Controller
         $validateData = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'title' => 'required',
-            'content'=>'required',
-            'category_id'=> 'required',
+            'content' => 'required',
+            'category_id' => 'required',
             'user_id' => 'required',
         ]);
-        
+
         if ($validateData->fails()) {
             return response()->json([
                 "message" => "Bad Request",
@@ -56,12 +55,10 @@ class PostsController extends Controller
             ], 400);
         }
 
-        $article=new Article();
-        $image=$request->image;
-        $filename=time().'.'.$image->getClientOriginalExtension();
-        
-        $request->image->move('assets',$filename);
-        $article->image=$filename;
+        $article = new Article();
+        $data=$request->image->hashName();
+        $request->image->move('assets',$data);
+        $article->image=$data;
         $article->user_id = auth()->user()->id;
         $article->category_id = $request->category_id;
         $article->title = $request->title;
@@ -70,63 +67,62 @@ class PostsController extends Controller
 
         return response()->json(
             [
-            "message" => "New article has been added!",
-            "data" => $article,
-            ], 200);
+                "message" => "New article has been added!",
+                "data" => $article,
+            ],
+            200
+        );
     }
 
     public function update(Request $request, $id)
     {
-        if($article = Article::find($id))
-        {   
+        if ($article = Article::find($id)) {
 
             $validateData = Validator::make($request->all(), [
                 'title' => 'required',
-                'content'=>'required',
+                'content' => 'required',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'category_id'=> 'required',
+                'category_id' => 'required',
                 'user_id' => 'required',
             ]);
-        
-        $article = Article::findOrFail($id);
-        if ($request->file('image')) {
-            if ($request->image) {
-                File::delete(public_path('assets/' . $article->image));
+
+            $article = Article::findOrFail($id);
+            if ($request->file('image')) {
+                if ($request->image) {
+                    File::delete(public_path('assets/' . $article->image));
+                }
+
+
+                $data = $request->image->hashName();
+                $request->image->move('assets', $data);
+                $article->image = $data;
             }
 
-            $image=$request->image;
-            $filename=time().'.'.$image->getClientOriginalExtension();
-            $request->image->move('assets',$filename);
-            $article->image=$filename;
-        }
-        
-        $article->user_id = auth()->user()->id;
-        $article->category_id = $request->category_id;
-        $article->title = $request->title;
-        $article->content = $request->content;
-        $article->save();
+            $article->user_id = auth()->user()->id;
+            $article->category_id = $request->category_id;
+            $article->title = $request->title;
+            $article->content = $request->content;
+            $article->save();
 
             return response()->json([
                 "message" => "Update data success",
-                "data" => $article], 201);
-            }
-        else
+                "data" => $article
+            ], 201);
+        } else
             return response()->json(["message" => "Data Not Found"], 404);
     }
 
-    public function destroy($id){
-        if($article = Article::find($id))
-        {
+    public function destroy($id)
+    {
+        if ($article = Article::find($id)) {
             File::delete(public_path('assets/' . $article->image));
             $article->delete();
             return response()->json([
                 "message" => "Delete data success",
-                ], 200);
-        }
-        else
+            ], 200);
+        } else
             return response()->json([
                 "message" => "Data Not Found"
             ], 404);
     }
-
 }

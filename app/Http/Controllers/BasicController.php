@@ -48,6 +48,8 @@ class HomeController extends Controller
 
     public function store(Request $request)
     {
+        // $datas=$request->all();
+        // dd($datas);
         // ddd($request);
         $request->validate([
             'title' => 'required',
@@ -57,9 +59,16 @@ class HomeController extends Controller
         ]);
 
         $article=new Article();
+        // $image=$request->image;
         $data=$request->image->hashName();
+        // $filename=time().'.'.$image->getClientOriginalExtension();
+        // $filename=$data.'.'.$image->getClientOriginalExtension();
+        // $filename=$data;
+        
         $request->image->move('assets',$data);
+        // $request->image->move('assets',$filename);
         $article->image=$data;
+        // $article->image=$filename;
         $article->user_id = auth()->user()->id;
         $article->category_id = $request->category_id;
         $article->title = $request->title;
@@ -96,6 +105,12 @@ class HomeController extends Controller
             }
 
             $data=$request->image->hashName();
+            // $image=$request->image;
+            // $data=$request->image->hashName();
+            // $filename=time().'.'.$image->getClientOriginalExtension();
+            // $filename=$data.'.'.$image->getClientOriginalExtension();
+            // $request->image->move('assets',$filename);
+            // $article->image=$filename;
             $request->image->move('assets',$data);
             $article->image=$data;
         }
